@@ -1,7 +1,6 @@
 # CSCI 1913
 # Project 1
 # Name: Amro Abu-atieh
-
 import random
 
 print('Hello, welcome to the Konane Game, this is the Hawaiian version of Checkers.')
@@ -79,7 +78,6 @@ def prep_board_human(board, player):
     double_jump_possible = True
 
     while double_jump_possible:
-        print(get_board_as_string(board))
         try:
             row_one, col_one = map(int, input(f"Player {player}, enter first row and first column: ").split(', '))
             row_two, col_two = map(int, input(f"Player {player}, enter second row and second column: ").split(', '))
@@ -101,10 +99,9 @@ def prep_board_human(board, player):
                     board[row_two][col_two] = player
                     board[row_one][col_one] = 0
                     board[middle_row][middle_col] = 0
-
                     print("The jump was successful.")
-                    valid_input = True
 
+                    # Check for double jump
                     next_row = row_two + (row_two - row_one)
                     next_col = col_two + (col_two - col_one)
 
@@ -115,24 +112,21 @@ def prep_board_human(board, player):
                         if (board[next_middle_row][next_middle_col] != 0 and
                                 board[next_middle_row][next_middle_col] != player and
                                 board[next_row][next_col] == 0):
-
                             double_jump_possible = True
-                            print(f"Double jump possible! Jump to {next_row}, {next_col}")
+                            print(f"You can do a double jump. Jump to {next_row}, {next_col}")
                             row_one, col_one = row_two, col_two
-                            row_two, col_two = next_row, next_col
                         else:
                             double_jump_possible = False
                     else:
                         double_jump_possible = False
-
                 else:
-                    print("Invalid jump. You can only jump over the opponent's piece.")
+                    print("That jump is invalid. You can only jump over the opponent's piece.")
                     double_jump_possible = False
             else:
                 print("Invalid move. Select your own piece.")
                 double_jump_possible = False
         else:
-            print("Invalid location. Please try again.")
+            print("Invalid location. Try again.")
             double_jump_possible = False
 
     print(get_board_as_string(board))
@@ -180,11 +174,12 @@ def get_valid_moves(board, player):
     for row in range(len(board)):
         for col in range(len(board[0])):
 
-            if board[row][col] != 0:
+            if board[row][col] == player:
 
-                if get_valid_moves_for_stone(board,(row, col)):
-                    valid_moves.append((row, col))
+                stone_moves = get_valid_moves_for_stone(board,(row, col))
+                valid_moves.extend(stone_moves)
 
+    valid_moves.sort()
     return valid_moves
 
 def human_player(board, player):
@@ -207,9 +202,10 @@ def human_player(board, player):
 def random_player(board, player):
     valid_moves = get_valid_moves(board, player)
 
-    if not valid_moves:
+    if valid_moves:
+        return random.choice(valid_moves)
+    else:
         return ()
-    return random.choice(valid_moves)
 
 def ai_player(board, player):
     valid_moves = get_valid_moves(board, player)
