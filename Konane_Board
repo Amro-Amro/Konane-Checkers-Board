@@ -1,6 +1,6 @@
-# CSCI 1913
 # Project 1
 # Name: Amro Abu-atieh
+
 import random
 
 print('Hello, welcome to the Konane Game, this is the Hawaiian version of Checkers.')
